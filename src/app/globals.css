@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 224 71.4% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 180 66% 38%;  /* Teal/Turquoise */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 35 91% 60%; /* Orange */
+    --secondary-foreground: 220.9 39.3% 11%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+    --accent: 280 60% 35%;   /* Dark Purple */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 180 66% 38%;
+    --radius: 0.5rem;
+    --chart-1: 180 66% 38%;  /* Teal/Turquoise */
+    --chart-2: 35 91% 60%;   /* Orange */
+    --chart-3: 280 60% 35%;  /* Dark Purple */
+    --chart-4: 150 60% 50%;  /* Green */
+    --chart-5: 200 75% 55%;  /* Blue */
+  }
+
+  .dark {
+    --background: 224 71.4% 4.1%;
+    --foreground: 210 20% 98%;
+    --card: 224 71.4% 4.1%;
+    --card-foreground: 210 20% 98%;
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 180 66% 42%;  /* Teal/Turquoise */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 35 91% 65%; /* Orange */
+    --secondary-foreground: 0 0% 0%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 280 60% 30%;   /* Dark Purple */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --ring: 180 66% 42%;
+    --chart-1: 180 66% 52%;  /* Teal/Turquoise */
+    --chart-2: 35 91% 65%;   /* Orange */
+    --chart-3: 280 60% 30%;  /* Dark Purple */
+    --chart-4: 150 60% 55%;  /* Green */
+    --chart-5: 200 75% 60%;  /* Blue */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+@layer components {
+  .container-wide {
+    @apply container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background h-10 py-2 px-4;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background h-10 py-2 px-4;
+  }
+}
