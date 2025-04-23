@@ -1,0 +1,109 @@
+// Prisma schema for MarketSage backend
+// Datasource and generator
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// NextAuth.js models (User, Account, Session, VerificationToken)
+model User {
+  id            String   @id @default(cuid())
+  name          String?
+  email         String?  @unique
+  password      String
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+
+  // Relations
+  campaigns     Campaign[]
+  contacts      Contact[]
+  workflows     Workflow[]
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// MarketSage SaaS core models
+model Campaign {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  subject   String
+  content   String
+  status    String   // draft, scheduled, sent, etc.
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  emailLogs EmailLog[]
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  email     String   @unique
+  name      String?
+  tags      String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  emailLogs EmailLog[]
+}
+
+model Workflow {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  name      String
+  trigger   String
+  steps     Json
+  status    String   // active, paused
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EmailLog {
+  id         String   @id @default(cuid())
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  campaignId String
+  contact    Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  contactId  String
+  event      String   // sent, opened, clicked, bounced, etc.
+  timestamp  DateTime @default(now())
+}
