@@ -1,22 +1,38 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Bell, User, LogOut, Search, Menu, X } from "lucide-react"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
+import { Bell, User, LogOut, Search, Menu, X, Sun, Moon, Laptop } from "lucide-react";
 
-export function DashboardHeader({ toggleSidebar, isSidebarOpen }: {
-  toggleSidebar: () => void
-  isSidebarOpen: boolean
+export function DashboardHeader({
+  toggleSidebar,
+  isSidebarOpen,
+}: {
+  toggleSidebar: () => void;
+  isSidebarOpen: boolean;
 }) {
-  const router = useRouter()
-  const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const router = useRouter();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const handleLogout = () => {
-    // Clear authentication state
-    localStorage.removeItem('marketSageAuth')
-    // Redirect to home
-    router.push('/')
-  }
+    localStorage.removeItem("marketSageAuth");
+    router.push("/");
+  };
+
+  // cycle through system → light → dark
+  const cycleTheme = () => {
+    if (theme === "system") setTheme("light");
+    else if (theme === "light") setTheme("dark");
+    else setTheme("system");
+  };
+
+  const renderThemeIcon = () => {
+    if (theme === "system") return <Laptop className="h-5 w-5" />;
+    if (theme === "light") return <Sun className="h-5 w-5" />;
+    return <Moon className="h-5 w-5" />;
+  };
 
   return (
     <header className="bg-card h-16 border-b flex items-center justify-between px-4 sticky top-0 z-30">
@@ -27,11 +43,7 @@ export function DashboardHeader({ toggleSidebar, isSidebarOpen }: {
           className="p-2 rounded-md hover:bg-muted md:hidden"
           aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
         >
-          {isSidebarOpen ? (
-            <X className="h-5 w-5" />
-          ) : (
-            <Menu className="h-5 w-5" />
-          )}
+          {isSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
 
         <div className="relative hidden md:flex items-center">
@@ -44,13 +56,24 @@ export function DashboardHeader({ toggleSidebar, isSidebarOpen }: {
         </div>
       </div>
 
-      {/* Right side: Notifications and user */}
+      {/* Right side: Notifications, theme toggle, and user */}
       <div className="flex items-center gap-4">
+        {/* Theme toggle */}
+        <button
+          onClick={cycleTheme}
+          className="p-2 rounded-md hover:bg-muted"
+          aria-label="Toggle theme"
+        >
+          {renderThemeIcon()}
+        </button>
+
+        {/* Notifications */}
         <button className="p-2 rounded-md hover:bg-muted relative">
           <Bell className="h-5 w-5" />
           <span className="absolute top-1 right-1 bg-primary w-2 h-2 rounded-full"></span>
         </button>
 
+        {/* Profile dropdown */}
         <div className="relative">
           <button
             onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -82,5 +105,5 @@ export function DashboardHeader({ toggleSidebar, isSidebarOpen }: {
         </div>
       </div>
     </header>
-  )
+  );
 }

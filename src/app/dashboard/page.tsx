@@ -1,15 +1,48 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { BarChart, Mail, Users, ArrowUp, ArrowDown, MoreHorizontal, Inbox, Send, Trash, BarChart2 } from "lucide-react"
+import { useState, useEffect } from "react";
+import {
+  BarChart as BarIcon,
+  Mail,
+  Users,
+  ArrowUp,
+  ArrowDown,
+  MoreHorizontal,
+  Inbox,
+  BarChart2,
+  Send,
+  Trash,
+} from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
-// A simple Card component for the dashboard
-function DashboardCard({ title, value, icon: Icon, change, changeType }: {
-  title: string
-  value: string
-  icon: React.ElementType
-  change?: string
-  changeType?: "positive" | "negative" | "neutral"
+// Sample data for the chart
+const performanceData = [
+  { name: "Week 1", emailsSent: 50, opens: 20 },
+  { name: "Week 2", emailsSent: 75, opens: 35 },
+  { name: "Week 3", emailsSent: 100, opens: 60 },
+  { name: "Week 4", emailsSent: 125, opens: 80 },
+];
+
+function DashboardCard({
+  title,
+  value,
+  icon: Icon,
+  change,
+  changeType,
+}: {
+  title: string;
+  value: string;
+  icon: React.ElementType;
+  change?: string;
+  changeType?: "positive" | "negative" | "neutral";
 }) {
   return (
     <div className="bg-card rounded-lg border shadow-sm p-6">
@@ -22,13 +55,15 @@ function DashboardCard({ title, value, icon: Icon, change, changeType }: {
       <div className="mt-4">
         <p className="text-2xl font-bold">{value}</p>
         {change && (
-          <p className={`text-sm mt-1 flex items-center ${
-            changeType === "positive"
-              ? "text-green-500"
-              : changeType === "negative"
-              ? "text-red-500"
-              : "text-muted-foreground"
-          }`}>
+          <p
+            className={`text-sm mt-1 flex items-center ${
+              changeType === "positive"
+                ? "text-green-500"
+                : changeType === "negative"
+                ? "text-red-500"
+                : "text-muted-foreground"
+            }`}
+          >
             {changeType === "positive" ? (
               <ArrowUp className="h-3 w-3 mr-1" />
             ) : changeType === "negative" ? (
@@ -39,15 +74,19 @@ function DashboardCard({ title, value, icon: Icon, change, changeType }: {
         )}
       </div>
     </div>
-  )
+  );
 }
 
-// A simple activity item component
-function ActivityItem({ icon: Icon, title, time, description }: {
-  icon: React.ElementType
-  title: string
-  time: string
-  description: string
+function ActivityItem({
+  icon: Icon,
+  title,
+  time,
+  description,
+}: {
+  icon: React.ElementType;
+  title: string;
+  time: string;
+  description: string;
 }) {
   return (
     <div className="flex gap-4 py-3">
@@ -62,28 +101,26 @@ function ActivityItem({ icon: Icon, title, time, description }: {
         <p className="text-sm text-muted-foreground mt-1">{description}</p>
       </div>
     </div>
-  )
+  );
 }
 
 export default function DashboardPage() {
-  const [userName, setUserName] = useState("User")
+  const [userName, setUserName] = useState("User");
 
   useEffect(() => {
-    // Get user data from localStorage
     try {
-      const auth = localStorage.getItem('marketSageAuth')
+      const auth = localStorage.getItem("marketSageAuth");
       if (auth) {
-        const { user } = JSON.parse(auth)
+        const { user } = JSON.parse(auth);
         if (user?.email) {
-          // Extract name from email (for demo purposes)
-          const name = user.email.split('@')[0]
-          setUserName(name.charAt(0).toUpperCase() + name.slice(1))
+          const name = user.email.split("@")[0];
+          setUserName(name.charAt(0).toUpperCase() + name.slice(1));
         }
       }
     } catch (error) {
-      console.error("Error getting user data:", error)
+      console.error("Error getting user data:", error);
     }
-  }, [])
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -120,7 +157,7 @@ export default function DashboardPage() {
         <DashboardCard
           title="Click Rate"
           value="4.3%"
-          icon={BarChart}
+          icon={BarIcon}
           change="-0.8% from last month"
           changeType="negative"
         />
@@ -128,7 +165,7 @@ export default function DashboardPage() {
 
       {/* Graphs and activity feed */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Performance chart placeholder */}
+        {/* Performance chart */}
         <div className="lg:col-span-2 bg-card rounded-lg border shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-medium">Campaign Performance</h3>
@@ -136,11 +173,25 @@ export default function DashboardPage() {
               <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
             </button>
           </div>
-          <div className="aspect-[4/3] bg-muted/30 rounded-md flex items-center justify-center">
-            <div className="text-center">
-              <BarChart2 className="h-10 w-10 mx-auto text-muted-foreground/50" />
-              <p className="text-sm text-muted-foreground mt-2">Performance visualization will appear here</p>
-            </div>
+
+          {/* Replace placeholder with Recharts line chart */}
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={performanceData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="opens"
+                  stroke="#8884d8"
+                  strokeWidth={2}
+                  dot={{ r: 3 }}
+                  activeDot={{ r: 5 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
@@ -148,7 +199,9 @@ export default function DashboardPage() {
         <div className="bg-card rounded-lg border shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-medium">Recent Activity</h3>
-            <button className="text-sm text-primary hover:underline">View all</button>
+            <button className="text-sm text-primary hover:underline">
+              View all
+            </button>
           </div>
           <div className="space-y-2 divide-y">
             <ActivityItem
@@ -173,5 +226,5 @@ export default function DashboardPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

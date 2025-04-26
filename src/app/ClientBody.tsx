@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { ThemeProvider } from "next-themes";
 
 export default function ClientBody({
   children,
@@ -9,13 +10,17 @@ export default function ClientBody({
 }) {
   // Remove any extension-added classes during hydration
   useEffect(() => {
-    // This runs only on the client after hydration
     document.body.className = "antialiased bg-background text-foreground";
   }, []);
 
   return (
-    <body className="antialiased bg-background text-foreground" suppressHydrationWarning>
-      {children}
-    </body>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <body
+        className="antialiased bg-background text-foreground"
+        suppressHydrationWarning
+      >
+        {children}
+      </body>
+    </ThemeProvider>
   );
 }

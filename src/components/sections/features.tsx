@@ -1,41 +1,48 @@
-import { Mail, ChevronRight, BarChart3, Settings2, Workflow, Zap } from "lucide-react"
+import { Mail, ChevronRight, BarChart3, Settings2, Workflow, Zap, ShoppingCart, Filter } from "lucide-react"
 import Link from "next/link"
 
 const features = [
   {
-    id: "email-builder",
-    title: "Smart Email Builder",
+    id: "ecommerce-integration",
+    title: "eCommerce Integration",
     description:
-      "Create beautiful, responsive emails that look great on any device with our intuitive drag-and-drop builder.",
-    icon: Mail,
+      "Sync product and customer data from stores to enable personalized automation and targeted messaging. Works with WooCommerce, Shopify, etc.",
+    icon: ShoppingCart,
   },
   {
-    id: "automation",
-    title: "Marketing Automation",
+    id: "smart-segmentation",
+    title: "Smart Segmentation",
     description:
-      "Automate your marketing campaigns with our powerful workflow builder to nurture leads and increase conversions.",
-    icon: Workflow,
+      "Group customers using detailed filters such as purchase history, total spend, last activity, and product interest.",
+    icon: Filter,
   },
   {
-    id: "analytics",
-    title: "Advanced Analytics",
+    id: "deep-analytics",
+    title: "Deep Analytics",
     description:
-      "Get detailed insights into campaign performance with comprehensive reporting and analytics dashboards.",
+      "Access insights into customer behavior, segment performance, and campaign results in real-time.",
     icon: BarChart3,
   },
   {
-    id: "personalization",
-    title: "Personalization",
+    id: "dynamic-personalization",
+    title: "Dynamic Personalization",
     description:
-      "Create dynamic content that changes based on subscriber data, behavior, and preferences.",
+      "Use contact attributes like location, gender, or interests to personalize content dynamically.",
     icon: Settings2,
   },
   {
-    id: "integrations",
-    title: "Integrations",
+    id: "cart-abandonment",
+    title: "Cart Abandonment",
     description:
-      "Connect with your favorite tools and platforms to create seamless marketing workflows.",
-    icon: Zap,
+      "Automatically re-engage customers who leave items in their cart. Recover lost revenue with triggered reminders.",
+    icon: ShoppingCart,
+  },
+  {
+    id: "transactional-emails",
+    title: "Transactional Emails",
+    description:
+      "Send time-sensitive messages like order confirmations, password resets, shipping updates, and more — in real-time.",
+    icon: Mail,
   },
 ]
 
@@ -69,7 +76,7 @@ export function FeaturesSection() {
                 className="group inline-flex items-center text-primary font-medium"
                 aria-label={`Learn more about ${title}`}
               >
-                Learn more{" "}
+                Learn more{` `}
                 <ChevronRight className="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </Link>
             </div>
