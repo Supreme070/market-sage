@@ -1,16 +1,14 @@
-// src/app/api/campaigns/[id]/route.ts
-
+// src/app/api/subscribers/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 
-// Schema for full replace (PUT)
-const campaignSchema = z.object({
-  subject: z.string().min(1),
-  content: z.string().min(1),
-  status: z.enum(["draft", "active", "paused"]),
+// Schema for full replace
+const subscriberSchema = z.object({
+  email: z.string().email(),
+  name: z.string().min(1),
 });
 
 export async function GET(
@@ -21,14 +19,13 @@ export async function GET(
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
-  const campaign = await prisma.campaign.findFirst({
+  const sub = await prisma.subscriber.findFirst({
     where: { id: params.id, userId: session.user.id },
   });
-  if (!campaign) {
+  if (!sub) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  return NextResponse.json({ campaign });
+  return NextResponse.json(sub);
 }
 
 export async function PUT(
@@ -39,21 +36,19 @@ export async function PUT(
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
   const body = await req.json();
-  const parsed = campaignSchema.safeParse(body);
+  const parsed = subscriberSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
       { error: "Invalid data", issues: parsed.error.errors },
       { status: 400 }
     );
   }
-
-  const updated = await prisma.campaign.update({
-    where: { id: params.id, userId: session.user.id },
+  const updated = await prisma.subscriber.update({
+    where: { id: params.id },
     data: parsed.data,
   });
-  return NextResponse.json({ campaign: updated });
+  return NextResponse.json(updated);
 }
 
 export async function PATCH(
@@ -64,21 +59,19 @@ export async function PATCH(
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
   const body = await req.json();
-  const parsed = campaignSchema.partial().safeParse(body);
+  const parsed = subscriberSchema.partial().safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
       { error: "Invalid data", issues: parsed.error.errors },
       { status: 400 }
     );
   }
-
-  const updated = await prisma.campaign.update({
-    where: { id: params.id, userId: session.user.id },
+  const updated = await prisma.subscriber.update({
+    where: { id: params.id },
     data: parsed.data,
   });
-  return NextResponse.json({ campaign: updated });
+  return NextResponse.json(updated);
 }
 
 export async function DELETE(
@@ -89,8 +82,7 @@ export async function DELETE(
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
-  await prisma.campaign.delete({
+  await prisma.subscriber.delete({
     where: { id: params.id, userId: session.user.id },
   });
   return NextResponse.json({ deleted: true });

@@ -1,4 +1,4 @@
-// src/app/api/campaigns/route.ts
+// src/app/api/email-templates/route.ts
 
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
@@ -6,23 +6,22 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 
-const createCampaignSchema = z.object({
-  subject: z.string().min(1),
+const createTemplateSchema = z.object({
+  name: z.string().min(1),
+  category: z.string().min(1),
   content: z.string().min(1),
-  status: z.enum(["draft", "active", "paused"]),
 });
 
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user) {
-    // If not authenticated, return empty list
     return NextResponse.json([], { status: 200 });
   }
-  const campaigns = await prisma.campaign.findMany({
+  const templates = await prisma.emailTemplate.findMany({
     where: { userId: session.user.id },
-    orderBy: { createdAt: "desc" },
+    orderBy: { updatedAt: "desc" },
   });
-  return NextResponse.json(campaigns);
+  return NextResponse.json(templates);
 }
 
 export async function POST(req: NextRequest) {
@@ -32,7 +31,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const parsed = createCampaignSchema.safeParse(body);
+  const parsed = createTemplateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
       { error: "Invalid data", issues: parsed.error.errors },
@@ -40,11 +39,11 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const newCampaign = await prisma.campaign.create({
+  const newTemplate = await prisma.emailTemplate.create({
     data: {
       ...parsed.data,
       userId: session.user.id,
     },
   });
-  return NextResponse.json(newCampaign, { status: 201 });
+  return NextResponse.json(newTemplate, { status: 201 });
 }
