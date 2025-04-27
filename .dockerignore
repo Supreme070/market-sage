@@ -1,0 +1,14 @@
+# Don’t send node_modules or build artifacts into the image
+node_modules
+.next
+out
+build
+
+# Ignore Git metadata and editor settings
+.git
+.vscode
+.DS_Store
+
+# Logs and environment files
+*.log
+.env*
