@@ -1,11 +1,9 @@
-version: '3.8'
-
 services:
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    image: supreme070/market-sage:latest   # your Docker Hub repo/tag
+    image: supreme070/market-sage:latest
     restart: always
     ports:
       - '3000:3000'
