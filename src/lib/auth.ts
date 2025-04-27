@@ -1,8 +1,8 @@
 // src/lib/auth.ts
 
-import { NextAuthOptions, Session } from "next-auth";
+import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";  // updated import
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
@@ -22,8 +22,28 @@ declare module "next-auth" {
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
+
+  // Use JWT sessions
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
+
+  // Cookie options to allow non-secure on HTTP localhost
+  cookies: {
+    sessionToken: {
+      name:
+        process.env.NODE_ENV === "production"
+          ? "__Secure-next-auth.session-token"
+          : "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: false,
+      },
+    },
+  },
+
+  // Authentication providers
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -49,9 +69,13 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+
+  // Custom sign-in page
   pages: {
     signIn: "/login",
   },
+
+  // Callbacks to include user ID on session
   callbacks: {
     async session({ session, token }) {
       if (token && session.user) {

@@ -1,12 +1,16 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 
-// Prevent hot-reload multiple instances in dev:
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+// Determine log levels based on DEBUG and NODE_ENV
+const isDebug = process.env.DEBUG?.includes('prisma:client');
+const logLevels: Prisma.LogLevel[] = isDebug
+  ? ['query', 'info', 'warn', 'error']
+  : process.env.NODE_ENV === 'development'
+  ? ['query', 'error', 'warn']
+  : ['error'];
 
-export const prisma =
-  globalForPrisma.prisma ||
-  new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  });
+export const prisma = new PrismaClient({ log: logLevels });
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+// Prevent multiple instances in dev
+if (process.env.NODE_ENV !== 'production') {
+  (globalThis as any).prisma = prisma;
+}

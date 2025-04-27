@@ -1,18 +1,40 @@
-FROM imbios/bun-node:latest
+# Dockerfile
+
+# Stage 1: build
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json ./
-COPY bun.lock ./
+# Install all dependencies (dev + prod)
+COPY package.json package-lock.json ./
+RUN npm ci
 
-RUN bun install --frozen-lockfile
-
+# Copy source code
 COPY . .
 
-RUN bun run prisma generate
+# Generate Prisma client
+RUN npx prisma generate
 
-RUN bun run build
+# Build Next.js app
+RUN npm run build
+
+
+# Stage 2: runtime
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install only production dependencies
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
+# Copy Next.js build output
+COPY --from=builder /app/.next ./.next
+
+# (If you have a public folder, uncomment the next line)
+# COPY --from=builder /app/public ./public
 
 EXPOSE 3000
 
-CMD ["bun", "run", "start"]
+# Start the Next.js server
+CMD ["npm", "start"]
